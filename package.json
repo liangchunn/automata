@@ -7,13 +7,25 @@
     "test": "typescript-node-scripts test",
     "start": "typescript-node-scripts start",
     "build": "typescript-node-scripts build",
-    "lint": "tslint --project ."
+    "lint": "eslint 'src/**/*.{js,ts}'"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
+    "@types/lodash": "^4.14.138",
     "@types/node": "^12.7.4",
-    "tslint": "^5.19.0",
+    "@typescript-eslint/eslint-plugin": "^2.1.0",
+    "@typescript-eslint/parser": "^2.1.0",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.2.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^1.18.2",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.6.2",
     "typescript-node-scripts": "^3.0.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
   }
 }
