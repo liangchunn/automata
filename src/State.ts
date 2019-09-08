@@ -26,7 +26,8 @@ export class State implements StateInterface {
 }
 
 export class NullState implements StateInterface {
-  public label = 'NullState'
+  public static NULL_STATE_LABEL = 'NullState' as const
+  public label = NullState.NULL_STATE_LABEL
   public transitions: Transition[] = []
   public traverse(_: string): StateInterface[] {
     return [this]

@@ -4,7 +4,7 @@ import { Transition } from '~/Transition'
 describe('NullState', () => {
   it('can create a NullState with no transitions', () => {
     const nullState = new NullState()
-    expect(nullState.label).toEqual('NullState')
+    expect(nullState.label).toEqual(NullState.NULL_STATE_LABEL)
     expect(nullState.transitions).toHaveLength(0)
   })
   it('returns a itself if traverse() is called', () => {
@@ -29,6 +29,8 @@ describe('State', () => {
   it('returns a NullState if there is no eligible transition', () => {
     const transitionLabel = 'a'
     const s1 = new State('s1')
-    expect(s1.traverse(transitionLabel)[0].label).toBe('NullState')
+    expect(s1.traverse(transitionLabel)[0].label).toBe(
+      NullState.NULL_STATE_LABEL
+    )
   })
 })

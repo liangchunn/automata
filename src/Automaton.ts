@@ -30,6 +30,7 @@ export class Automaton {
     startSymbols: StateInit[],
     finalStates: StateInit[]
   ) {
+    // set up the states from the strinngs
     this.states = stateInit.map(label => {
       if (label === Automaton.START_SYMBOL) {
         throw new Error(
@@ -38,6 +39,8 @@ export class Automaton {
       }
       return new State(label)
     })
+
+    // set up the transitions for each state
     for (const state of this.states) {
       const transitions = transitionInit.filter(t => t.from === state.label)
       state.transitions = transitions.map(t => {
@@ -56,7 +59,8 @@ export class Automaton {
         return new Transition(from, to, t.alphabet)
       })
     }
-    // for each start symbol, find the State objects from this.state
+
+    // for each start state, find the State objects from this.states
     const startState = startSymbols.map(startSymbol => {
       const foundState = this.states.find(s => s.label === startSymbol)
       if (!foundState) {
@@ -66,6 +70,7 @@ export class Automaton {
     })
     this.startState = startState
 
+    // for each final state, find the State objects from this.states
     this.finalStates = finalStates.map(f => {
       const state = this.states.find(s => s.label === f)
       if (!state) {
@@ -77,6 +82,13 @@ export class Automaton {
     this.type = this.getAutomatonType(this)
   }
 
+  /**
+   * Gets the automaton type
+   * An automaton is a NFA if
+   *   - it contains more than one start state
+   *   - there exists a state which has a duplicate alphabet in its transitions
+   * @param automaton
+   */
   private getAutomatonType(automaton: Automaton) {
     if (automaton.startState.length > 1) {
       return AutomatonType.NFA
