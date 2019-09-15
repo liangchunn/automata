@@ -1,66 +1,15 @@
-import * as util from 'util'
-import { StateInit, TransitionInit, Automaton } from './Automaton'
+import { Automaton } from './Automaton'
+import { log } from './util/log'
+import * as NFAConfig from './sample/nfa2.json'
 
-//       +--+      +--+      +--+
-//  +--->+s1+--a-->+s2+--b-->+s3+<---+
-//       ++-+      +--+      +-++
-//        |                    |
-//        |                    |
-//       a,b                   |
-//        |                    a
-//        v                    |
-//      +----+                 |
-//      |----|                 |
-// +-----|s4|-<----------------+
-// |    |----|
-// |    +----+
-// b      ^
-// |      |
-// +------+
-//
-const states: StateInit[] = ['s1', 's2', 's3', 's4']
-const transitions: TransitionInit[] = [
-  {
-    from: 's1',
-    to: 's2',
-    alphabet: 'a'
-  },
-  {
-    from: 's1',
-    to: 's4',
-    alphabet: 'b'
-  },
-  {
-    from: 's1',
-    to: 's4',
-    alphabet: 'a'
-  },
-  {
-    from: 's2',
-    to: 's3',
-    alphabet: 'b'
-  },
-  {
-    from: 's3',
-    to: 's4',
-    alphabet: 'a'
-  },
-  {
-    from: 's4',
-    to: 's4',
-    alphabet: 'b'
-  }
-]
-const startStates: StateInit[] = ['s1', 's3']
-const finalStates: StateInit[] = ['s4']
+const nfa = new Automaton({...NFAConfig})
 
-const automaton = new Automaton(states, transitions, startStates, finalStates)
+const dfa = nfa.convertToDfa()
 
-const simulation = automaton.simulate('abab')
+const testString = 'aabaa'
+const nfaSimulation = nfa.simulate(testString)
+const dfaSimulation = dfa.simulate(testString)
 
-console.log(
-  util.inspect(simulation, {
-    showHidden: false,
-    depth: null
-  })
-)
+log(nfaSimulation)
+log(dfaSimulation)
+log(nfaSimulation.accepted === dfaSimulation.accepted)

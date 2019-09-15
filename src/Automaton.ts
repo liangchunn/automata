@@ -1,7 +1,8 @@
-import { flatten, uniq } from 'lodash'
-import { State } from './State'
+import { flatten, uniq, uniqBy, head } from 'lodash'
+import { State, NullState } from './State'
 import { Transition } from './Transition'
 import { Tree, Node } from './Tree'
+import { log } from './util/log'
 
 export enum AutomatonType {
   DFA = 'DFA',
@@ -16,20 +17,31 @@ export type TransitionInit = {
   alphabet: string
 }
 
+export type AutomatonContructorArgs = {
+  states: StateInit[]
+  transitions: TransitionInit[]
+  startStates: StateInit[]
+  finalStates: StateInit[]
+  symbols: string[]
+}
+
 export class Automaton {
   public static START_SYMBOL = 'S'
 
   public states: State[]
-  public startState: State[]
+  public startStates: State[]
   public finalStates: State[]
   public type: AutomatonType
+  public symbols: string[]
 
-  constructor(
-    stateInit: StateInit[],
-    transitionInit: TransitionInit[],
-    startSymbols: StateInit[],
-    finalStates: StateInit[]
-  ) {
+  constructor({
+    states: stateInit,
+    transitions: transitionInit,
+    startStates: startSymbols,
+    finalStates,
+    symbols
+  }: AutomatonContructorArgs) {
+    this.symbols = symbols
     // set up the states from the strinngs
     this.states = stateInit.map(label => {
       if (label === Automaton.START_SYMBOL) {
@@ -68,7 +80,7 @@ export class Automaton {
       }
       return foundState
     })
-    this.startState = startState
+    this.startStates = startState
 
     // for each final state, find the State objects from this.states
     this.finalStates = finalStates.map(f => {
@@ -90,11 +102,13 @@ export class Automaton {
    * @param automaton
    */
   private getAutomatonType(automaton: Automaton) {
-    if (automaton.startState.length > 1) {
+    if (automaton.startStates.length > 1) {
       return AutomatonType.NFA
     }
     for (const state of automaton.states) {
       const transitions = state.transitions
+      // TODO: does not handle duplicates!
+      // TODO: for example s1 -a-> s2, s1 -a-> s2
       const reduced = uniq(transitions.map(t => t.alphabet))
       if (reduced.length !== transitions.length) {
         return AutomatonType.NFA
@@ -104,7 +118,7 @@ export class Automaton {
   }
 
   public simulate(testString: string[] | string) {
-    let states = this.startState
+    let states = this.startStates
 
     // set up the execution tree
     const tree = new Tree(new Node(Automaton.START_SYMBOL, null, []))
@@ -172,5 +186,121 @@ export class Automaton {
       acceptedPaths,
       tree
     }
+  }
+
+  public convertToDfa() {
+    if (this.type !== AutomatonType.NFA) {
+      throw new Error('Conversion to a DFA requires a NFA automaton')
+    }
+
+    const queue = [this.startStates]
+
+    const startStates: Set<string> = new Set()
+    const states: Set<string> = new Set()
+    const transitions: Set<TransitionInit> = new Set()
+
+    let isFirstIteration = true
+    let depth = 0
+
+    while (queue.length) {
+      const current = head(queue)!
+
+      // error handling in case something really goes wrong
+      depth++
+      if (depth > 10000) {
+        log({states, transitions, queue})
+        throw new Error('Maximum depth exceeded')
+      }
+
+      // TODO: use set and don't rely on sorting
+      const mergedLabel = current.map(s => s.label).sort().join(',')
+
+      states.add(mergedLabel)
+
+      if (isFirstIteration) {
+        startStates.add(mergedLabel)
+        isFirstIteration = false
+      }
+
+      // set up a new temporary state and merge all the transitions
+      // so that we can use this to fire all the symbols
+      const tempState = new State(mergedLabel)
+      tempState.transitions = flatten(current.map(s => s.transitions))
+
+      const nextStates: State[][] = []
+
+      // fire for each symbol
+      for (const symbol of this.symbols) {
+        // get all the eligible states
+        const eligibleStates = tempState.traverse(symbol)
+        // remove all NullState and get the unique symbol by labels
+        let eligibleNextStates = uniqBy(eligibleStates, s => s.label).filter(
+          s => s.label !== NullState.NULL_STATE_LABEL
+        )
+
+        const eligibleMergedLabel = uniq(
+          // TODO: use set and don't rely on sorting
+          eligibleNextStates.map(s => s.label).sort()
+        ).join(',')
+
+        if (eligibleMergedLabel.length) {
+          // if the transition already exists, we want
+          // to remove it from the eligible next states
+          // this is to prevent the program from running
+          // into infinite loops if a transition is self recursive
+          if (
+            Array.from(transitions).find(
+              t =>
+                t.alphabet === symbol &&
+                (t.to === eligibleMergedLabel || t.to === mergedLabel) &&
+                (t.from === mergedLabel || t.from === eligibleMergedLabel)
+            )
+          ) {
+            // TODO: breaks on NFA2
+            eligibleNextStates = eligibleNextStates.filter(
+              s => { 
+                return !eligibleMergedLabel.split(',').includes(s.label)
+              }
+            )
+          } else {
+            transitions.add({
+              from: mergedLabel,
+              to: eligibleMergedLabel,
+              alphabet: symbol
+            })
+          }
+        }
+
+        // if there are any eligible next states
+        if (eligibleNextStates.length) {
+          states.add(eligibleMergedLabel)
+          nextStates.push(eligibleNextStates)
+        }
+      }
+
+      // push next states into the queue
+      if (nextStates.length) {
+        queue.push(...nextStates)
+      }
+      // dequeue the processed state
+      queue.shift()
+    }
+
+    console.log(Array.from(transitions))
+
+    return new Automaton( {
+      states: Array.from(states),
+      transitions: Array.from(transitions),
+      startStates: Array.from(startStates),
+      finalStates: Array.from(states).filter(s => {
+        for (const finalState of this.finalStates) {
+          if (s.indexOf(finalState.label) !== -1) {
+            return true
+          }
+        }
+        return false
+      }),
+      symbols: this.symbols
+    })
   }
 }
