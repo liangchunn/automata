@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "outDir": "build",
     "module": "commonjs",
     "target": "es6",
@@ -11,10 +10,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
-    "sourceMap": true,
-    "paths": {
-        "~/*": ["src/*"]
-    }
+    "sourceMap": true
   },
   "exclude": ["node_modules", "build", "coverage", "dist", "setupTests.ts"]
 }

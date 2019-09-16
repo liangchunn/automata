@@ -3,6 +3,7 @@ import { State, NullState } from './State'
 import { Transition } from './Transition'
 import { Tree, Node } from './Tree'
 import { log } from './util/log'
+import { mergeSetLabels, mergedLabelContains } from './util/mergeLabels'
 
 export enum AutomatonType {
   DFA = 'DFA',
@@ -41,7 +42,6 @@ export class Automaton {
     finalStates,
     symbols
   }: AutomatonContructorArgs) {
-    this.symbols = symbols
     // set up the states from the strinngs
     this.states = stateInit.map(label => {
       if (label === Automaton.START_SYMBOL) {
@@ -92,6 +92,17 @@ export class Automaton {
     })
 
     this.type = this.getAutomatonType(this)
+
+    // check if transitions have alphabets which contain in symbols
+    for (const transition of transitionInit) {
+      if (!symbols.includes(transition.alphabet)) {
+        throw new Error(
+          `Transition ${transition.from} -> ${transition.to} contains a transition symbol '${transition.alphabet}' which is not included in symbols ${symbols}`
+        )
+      }
+    }
+
+    this.symbols = symbols
   }
 
   /**
@@ -208,12 +219,11 @@ export class Automaton {
       // error handling in case something really goes wrong
       depth++
       if (depth > 10000) {
-        log({states, transitions, queue})
+        log({ states, transitions, queue })
         throw new Error('Maximum depth exceeded')
       }
 
-      // TODO: use set and don't rely on sorting
-      const mergedLabel = current.map(s => s.label).sort().join(',')
+      const mergedLabel = mergeSetLabels(current.map(s => s.label))
 
       states.add(mergedLabel)
 
@@ -238,10 +248,9 @@ export class Automaton {
           s => s.label !== NullState.NULL_STATE_LABEL
         )
 
-        const eligibleMergedLabel = uniq(
-          // TODO: use set and don't rely on sorting
-          eligibleNextStates.map(s => s.label).sort()
-        ).join(',')
+        const eligibleMergedLabel = mergeSetLabels(
+          eligibleNextStates.map(s => s.label)
+        )
 
         if (eligibleMergedLabel.length) {
           // if the transition already exists, we want
@@ -252,15 +261,12 @@ export class Automaton {
             Array.from(transitions).find(
               t =>
                 t.alphabet === symbol &&
-                (t.to === eligibleMergedLabel || t.to === mergedLabel) &&
-                (t.from === mergedLabel || t.from === eligibleMergedLabel)
+                t.from === mergedLabel &&
+                t.to === eligibleMergedLabel
             )
           ) {
-            // TODO: breaks on NFA2
             eligibleNextStates = eligibleNextStates.filter(
-              s => { 
-                return !eligibleMergedLabel.split(',').includes(s.label)
-              }
+              s => !mergedLabelContains(eligibleMergedLabel, s.label)
             )
           } else {
             transitions.add({
@@ -286,9 +292,7 @@ export class Automaton {
       queue.shift()
     }
 
-    console.log(Array.from(transitions))
-
-    return new Automaton( {
+    return new Automaton({
       states: Array.from(states),
       transitions: Array.from(transitions),
       startStates: Array.from(startStates),
