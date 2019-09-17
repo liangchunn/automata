@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "main": "src/index.ts",
   "private": true,
+  "license": "GPL-3.0-only",
   "scripts": {
     "test": "typescript-node-scripts test",
     "start": "typescript-node-scripts start",
