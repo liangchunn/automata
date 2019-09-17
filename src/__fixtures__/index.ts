@@ -1,2 +1,3 @@
-export * from './globalSymbol'
-export * from './nonExistentStateInTransitions'
+export * from './globalSymbolFixture'
+export * from './nonExistentStateInTransitionsFixture'
+export * from './nonExistentStartFinalStateFixture'

@@ -1,6 +1,6 @@
 import { AutomatonContructorArgs, Automaton } from '../Automaton'
 
-export const globalSymbol: AutomatonContructorArgs = {
+export const globalSymbolFixture: AutomatonContructorArgs = {
   states: [Automaton.START_SYMBOL],
   finalStates: [],
   startStates: [],

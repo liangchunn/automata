@@ -1,6 +1,6 @@
 import { AutomatonContructorArgs } from '../Automaton'
 
-export const nonExistentStateInTransitions1: AutomatonContructorArgs = {
+export const nonExistentStateInTransitionsFixture1: AutomatonContructorArgs = {
   states: ['s1', 's2'],
   finalStates: ['s2'],
   startStates: ['s1'],
@@ -14,7 +14,7 @@ export const nonExistentStateInTransitions1: AutomatonContructorArgs = {
   ]
 }
 
-export const nonExistentStateInTransitions2: AutomatonContructorArgs = {
+export const nonExistentStateInTransitionsFixture2: AutomatonContructorArgs = {
   states: ['s1', 's2'],
   finalStates: ['s2'],
   startStates: ['s1'],
