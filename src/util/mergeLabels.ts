@@ -20,5 +20,3 @@ export function mergeSetLabels(labels: string[]) {
 export function mergedLabelContains(mergedLabel: string, label: string) {
   return mergedLabel.split(LABEL_SEPARATOR).includes(label)
 }
-
-export function checkIfTranstitionExists() {}

@@ -13,4 +13,5 @@ const dfaSimulation = dfa.simulate(testString)
 log(nfaSimulation.acceptedPaths)
 log(dfaSimulation.acceptedPaths)
 log(nfaSimulation.accepted === dfaSimulation.accepted)
-// log(dfa)
+
+log(dfa)

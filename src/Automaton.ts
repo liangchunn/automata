@@ -118,10 +118,15 @@ export class Automaton {
     }
     for (const state of automaton.states) {
       const transitions = state.transitions
-      // TODO: does not handle duplicates!
-      // TODO: for example s1 -a-> s2, s1 -a-> s2
+      // TODO: handles duplicates but might not be the most optimal
+      // with using nonDuplicatedTransitions
       const reduced = uniq(transitions.map(t => t.alphabet))
-      if (reduced.length !== transitions.length) {
+      const nonDuplicatedTransitions = uniqBy(
+        transitions,
+        transition =>
+          `${transition.from.label}, ${transition.to.label}, ${transition.alphabet}`
+      )
+      if (reduced.length !== nonDuplicatedTransitions.length) {
         return AutomatonType.NFA
       }
     }
@@ -292,7 +297,7 @@ export class Automaton {
       queue.shift()
     }
 
-    return new Automaton({
+    const newAutomatonConfig = {
       states: Array.from(states),
       transitions: Array.from(transitions),
       startStates: Array.from(startStates),
@@ -305,6 +310,8 @@ export class Automaton {
         return false
       }),
       symbols: this.symbols
-    })
+    }
+
+    return new Automaton(newAutomatonConfig)
   }
 }
