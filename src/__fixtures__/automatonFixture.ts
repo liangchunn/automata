@@ -74,7 +74,7 @@ export const automatonFixtures: AutomatonFixture[] = [
         }
       ]
     },
-    regExp: '',
+    regExp: 'TODO', // TODO: add regexp
     acceptedWords: [
       {
         word: 'ab',
@@ -118,7 +118,7 @@ export const automatonFixtures: AutomatonFixture[] = [
         }
       ]
     },
-    regExp: '',
+    regExp: 'TODO', // TODO: add regexp
     acceptedWords: [
       {
         word: 'ab',
@@ -163,7 +163,7 @@ export const automatonFixtures: AutomatonFixture[] = [
       ],
       symbols: ['a', 'b', 'c']
     },
-    regExp: 'TODO',
+    regExp: 'TODO', // TODO: add regexp
     acceptedWords: [
       {
         word: 'aaaab',
@@ -225,7 +225,7 @@ export const automatonFixtures: AutomatonFixture[] = [
       ],
       symbols: ['a', 'b']
     },
-    regExp: '',
+    regExp: 'TODO', // TODO: add regexp
     acceptedWords: [
       {
         word: 'a',

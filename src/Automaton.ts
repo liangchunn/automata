@@ -181,13 +181,13 @@ export class Automaton {
       finalStateLabels.includes(ptr.label)
     )
 
-    const acceptedPaths = []
+    const acceptedPaths: string[][] = []
 
     // for each last executed pointer, we
     // traverse up the tree and keep track of the execution paths
     // the pushing it into acceptedPaths
     for (const ptr of acceptedPtrs) {
-      const sink = []
+      const sink: string[] = []
       let z: Node | null = ptr
       while (z !== null) {
         sink.push(z.label)
