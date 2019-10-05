@@ -1,3 +1,7 @@
 export * from './globalSymbolFixture'
 export * from './nonExistentStateInTransitionsFixture'
 export * from './nonExistentStartFinalStateFixture'
+export * from './nonExistentTransitionAlphabetFixture'
+export * from './nfaFixture1'
+export * from './dfaFixture1'
+export * from './automatonFixture'
