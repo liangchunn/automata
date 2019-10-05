@@ -183,5 +183,63 @@ export const automatonFixtures: AutomatonFixture[] = [
       }
     ],
     rejectedWords: ['bbbbb', 'aaaaa', 'bbbba']
+  },
+  {
+    name: 'nfaWithMultipleStartStates',
+    type: AutomatonType.NFA,
+    config: {
+      states: ['s1', 's2', 's3', 's4'],
+      startStates: ['s1', 's3'],
+      finalStates: ['s4'],
+      transitions: [
+        {
+          from: 's1',
+          to: 's2',
+          alphabet: 'a'
+        },
+        {
+          from: 's1',
+          to: 's4',
+          alphabet: 'b'
+        },
+        {
+          from: 's1',
+          to: 's4',
+          alphabet: 'a'
+        },
+        {
+          from: 's2',
+          to: 's3',
+          alphabet: 'b'
+        },
+        {
+          from: 's3',
+          to: 's4',
+          alphabet: 'a'
+        },
+        {
+          from: 's4',
+          to: 's4',
+          alphabet: 'b'
+        }
+      ],
+      symbols: ['a', 'b']
+    },
+    regExp: '',
+    acceptedWords: [
+      {
+        word: 'a',
+        pathLength: 2
+      },
+      {
+        word: 'bbb',
+        pathLength: 1
+      },
+      {
+        word: 'aba',
+        pathLength: 1
+      }
+    ],
+    rejectedWords: ['ba', 'baaaa', 'aa', 'aaa']
   }
 ]
