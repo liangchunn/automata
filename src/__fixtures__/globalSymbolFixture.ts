@@ -1,7 +1,8 @@
-import { AutomatonContructorArgs, Automaton } from '../Automaton'
+import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
+import { AutomatonSymbol } from '../types/AutomatonSymbol'
 
-export const globalSymbolFixture: AutomatonContructorArgs = {
-  states: [Automaton.START_SYMBOL],
+export const globalSymbolFixture: AutomatonDescriptor = {
+  states: [AutomatonSymbol.START_SYMBOL],
   finalStates: [],
   startStates: [],
   symbols: [],

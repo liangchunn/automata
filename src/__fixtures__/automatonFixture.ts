@@ -1,9 +1,10 @@
-import { AutomatonType, AutomatonContructorArgs } from '../Automaton'
+import { AutomatonType } from '../types/AutomatonType'
+import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
 
 type AutomatonFixture = {
   name: string
   type: AutomatonType
-  config: AutomatonContructorArgs
+  config: AutomatonDescriptor
   regExp: string
   acceptedWords: {
     word: string | string[]
@@ -74,7 +75,7 @@ export const automatonFixtures: AutomatonFixture[] = [
         }
       ]
     },
-    regExp: 'TODO', // TODO: add regexp
+    regExp: '#(aa|ab)#',
     acceptedWords: [
       {
         word: 'ab',
@@ -118,7 +119,7 @@ export const automatonFixtures: AutomatonFixture[] = [
         }
       ]
     },
-    regExp: 'TODO', // TODO: add regexp
+    regExp: '#(ab|ab)#',
     acceptedWords: [
       {
         word: 'ab',
@@ -163,7 +164,7 @@ export const automatonFixtures: AutomatonFixture[] = [
       ],
       symbols: ['a', 'b', 'c']
     },
-    regExp: 'TODO', // TODO: add regexp
+    regExp: '#((a|b))*(c|ab)#',
     acceptedWords: [
       {
         word: 'aaaab',
@@ -225,7 +226,7 @@ export const automatonFixtures: AutomatonFixture[] = [
       ],
       symbols: ['a', 'b']
     },
-    regExp: 'TODO', // TODO: add regexp
+    regExp: '(#a|#((b|a)|aba))b*#',
     acceptedWords: [
       {
         word: 'a',
@@ -241,5 +242,86 @@ export const automatonFixtures: AutomatonFixture[] = [
       }
     ],
     rejectedWords: ['ba', 'baaaa', 'aa', 'aaa']
+  },
+  {
+    name: 'complexNfaWithTrapState',
+    type: AutomatonType.NFA,
+    config: {
+      states: ['1', '2', '3', '4'],
+      startStates: ['4'],
+      finalStates: ['4', '3', '2'],
+      transitions: [
+        {
+          from: '4',
+          to: '3',
+          alphabet: 'a'
+        },
+        {
+          from: '4',
+          to: '3',
+          alphabet: 'b'
+        },
+        {
+          from: '3',
+          to: '3',
+          alphabet: 'b'
+        },
+        {
+          from: '3',
+          to: '4',
+          alphabet: 'a'
+        },
+        {
+          from: '4',
+          to: '2',
+          alphabet: 'b'
+        },
+        {
+          from: '2',
+          to: '2',
+          alphabet: 'a'
+        },
+        {
+          from: '2',
+          to: '1',
+          alphabet: 'b'
+        },
+        {
+          from: '1',
+          to: '1',
+          alphabet: 'a'
+        },
+        {
+          from: '1',
+          to: '1',
+          alphabet: 'b'
+        }
+      ],
+      symbols: ['a', 'b']
+    },
+    regExp: '#((a|b)b*a)*((#|ba*#)|(a|b)b*#)',
+    acceptedWords: [
+      {
+        word: '',
+        pathLength: 1
+      },
+      {
+        word: 'a',
+        pathLength: 1
+      },
+      {
+        word: 'b',
+        pathLength: 2
+      },
+      {
+        word: 'bbb',
+        pathLength: 1
+      },
+      {
+        word: 'baaaaaaa',
+        pathLength: 2
+      }
+    ],
+    rejectedWords: []
   }
 ]

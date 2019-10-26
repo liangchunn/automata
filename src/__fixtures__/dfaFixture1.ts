@@ -1,9 +1,9 @@
-import { AutomatonContructorArgs } from '../Automaton'
+import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
 
 /**
  * Language RegExp: aba
  */
-export const dfaFixture1: AutomatonContructorArgs = {
+export const dfaFixture1: AutomatonDescriptor = {
   states: ['s1', 's2', 's3', 's4'],
   finalStates: ['s4'],
   startStates: ['s1'],

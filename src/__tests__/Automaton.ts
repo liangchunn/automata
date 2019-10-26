@@ -1,33 +1,40 @@
 import {
+  automatonFixtures,
   globalSymbolFixture,
   nonExistentStateInTransitionsFixture1,
   nonExistentStateInTransitionsFixture2,
   nonExistentStartStateFixture,
   nonExistentFinalStateFixture,
-  nonExistentTransitionAlphabetFixture,
-  automatonFixtures
+  nonExistentTransitionAlphabetFixture
 } from '../__fixtures__'
-import { Automaton, AutomatonType } from '../Automaton'
+import { Automaton } from '../Automaton'
+import { AutomatonType } from '../types/AutomatonType'
+import { validateAutomaton } from '../Validation'
 
 describe('validation', () => {
   it('throws when the global start symbol is used', () => {
-    expect(() => new Automaton(globalSymbolFixture)).toThrow()
+    expect(() => validateAutomaton(globalSymbolFixture)).toThrow()
   })
   it('throws when a non-existing state is referenced in the transitions in "to"', () => {
-    expect(() => new Automaton(nonExistentStateInTransitionsFixture1)).toThrow()
+    expect(() =>
+      validateAutomaton(nonExistentStateInTransitionsFixture1)
+    ).toThrow()
   })
-  // TODO: fix this
-  it.skip('throws when a non-existing state is referenced in the transitions in "from"', () => {
-    expect(() => new Automaton(nonExistentStateInTransitionsFixture2)).toThrow()
+  it('throws when a non-existing state is referenced in the transitions in "from"', () => {
+    expect(() =>
+      validateAutomaton(nonExistentStateInTransitionsFixture2)
+    ).toThrow()
   })
   it('throws when a non-existent start state is referenced from states', () => {
-    expect(() => new Automaton(nonExistentStartStateFixture)).toThrow()
+    expect(() => validateAutomaton(nonExistentStartStateFixture)).toThrow()
   })
   it('throws when a non-existent final state is referenced from states', () => {
-    expect(() => new Automaton(nonExistentFinalStateFixture)).toThrow()
+    expect(() => validateAutomaton(nonExistentFinalStateFixture)).toThrow()
   })
   it('throws when a transition contains a symbol not in the symbols list', () => {
-    expect(() => new Automaton(nonExistentTransitionAlphabetFixture)).toThrow()
+    expect(() =>
+      validateAutomaton(nonExistentTransitionAlphabetFixture)
+    ).toThrow()
   })
 })
 
@@ -40,16 +47,14 @@ describe('automaton simulation', () => {
   )
   for (const fixture of dfaFixtures) {
     it(`can simulate words in the DFA ${fixture.name}`, () => {
-      const { config, acceptedWords, rejectedWords, type } = fixture
-      const dfa = new Automaton(config)
-      expect(dfa.type).toBe(type)
+      const { config, acceptedWords, rejectedWords } = fixture
       for (const word of acceptedWords) {
-        const simulation = dfa.simulate(word.word)
+        const simulation = Automaton.simulateAll(config, word.word)
         expect(simulation.accepted).toBe(true)
         expect(simulation.acceptedPaths).toHaveLength(word.pathLength)
       }
       for (const word of rejectedWords) {
-        const simulation = dfa.simulate(word)
+        const simulation = Automaton.simulateAll(config, word)
         expect(simulation.accepted).toBe(false)
         expect(simulation.acceptedPaths).toHaveLength(0)
       }
@@ -58,16 +63,14 @@ describe('automaton simulation', () => {
 
   for (const fixture of nfaFixtures) {
     it(`can simulate words in the NFA ${fixture.name}`, () => {
-      const { config, acceptedWords, rejectedWords, type } = fixture
-      const nfa = new Automaton(config)
-      expect(nfa.type).toBe(type)
+      const { config, acceptedWords, rejectedWords } = fixture
       for (const word of acceptedWords) {
-        const simulation = nfa.simulate(word.word)
+        const simulation = Automaton.simulateAll(config, word.word)
         expect(simulation.accepted).toBe(true)
         expect(simulation.acceptedPaths).toHaveLength(word.pathLength)
       }
       for (const word of rejectedWords) {
-        const simulation = nfa.simulate(word)
+        const simulation = Automaton.simulateAll(config, word)
         expect(simulation.accepted).toBe(false)
         expect(simulation.acceptedPaths).toHaveLength(0)
       }
@@ -80,21 +83,17 @@ describe('NFA to DFA conversion', () => {
     automaton => automaton.type === AutomatonType.NFA
   )
   for (const fixture of nfaFixtures) {
-    it(`can convert the NFA ${fixture.name} into a DFA`, () => {
-      const nfa = new Automaton(fixture.config)
-      expect(() => nfa.convertToDfa()).not.toThrow()
-      expect(() => nfa.convertToDfa().convertToDfa()).toThrow()
-    })
-    it(`accepts the same word as the converted DFA of the original NFA ${fixture.name}`, () => {
-      const nfa = new Automaton(fixture.config)
-      const dfa = nfa.convertToDfa()
+    it(`accepts thee same word as the converted DFA of the original NFA ${fixture.name}`, () => {
+      const dfaConfig = Automaton.convertToDfa(fixture.config)
       for (const word of fixture.acceptedWords) {
-        expect(nfa.simulate(word.word).accepted).toEqual(
-          dfa.simulate(word.word).accepted
-        )
+        expect(
+          Automaton.simulateAll(fixture.config, word.word).accepted
+        ).toEqual(Automaton.simulateAll(dfaConfig, word.word).accepted)
       }
       for (const word of fixture.rejectedWords) {
-        expect(nfa.simulate(word).accepted).toEqual(dfa.simulate(word).accepted)
+        expect(Automaton.simulateAll(fixture.config, word).accepted).toEqual(
+          Automaton.simulateAll(dfaConfig, word).accepted
+        )
       }
     })
   }

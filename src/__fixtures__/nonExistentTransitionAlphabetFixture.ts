@@ -1,6 +1,6 @@
-import { AutomatonContructorArgs } from '../Automaton'
+import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
 
-export const nonExistentTransitionAlphabetFixture: AutomatonContructorArgs = {
+export const nonExistentTransitionAlphabetFixture: AutomatonDescriptor = {
   states: ['s1', 's2'],
   finalStates: ['s2'],
   startStates: ['s1'],
