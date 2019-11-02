@@ -38,6 +38,27 @@ describe('validation', () => {
   })
 })
 
+describe('automaton type', () => {
+  const dfaFixtures = automatonFixtures.filter(
+    automaton => automaton.type === AutomatonType.DFA
+  )
+  const nfaFixtures = automatonFixtures.filter(
+    automaton => automaton.type === AutomatonType.NFA
+  )
+  for (const fixture of dfaFixtures) {
+    it(`verifies that ${fixture.name} is a DFA`, () => {
+      const { config } = fixture
+      expect(Automaton.getAutomatonType(config)).toBe(AutomatonType.DFA)
+    })
+  }
+  for (const fixture of nfaFixtures) {
+    it(`verifies that ${fixture.name} is a NFA`, () => {
+      const { config } = fixture
+      expect(Automaton.getAutomatonType(config)).toBe(AutomatonType.NFA)
+    })
+  }
+})
+
 describe('automaton simulation', () => {
   const dfaFixtures = automatonFixtures.filter(
     automaton => automaton.type === AutomatonType.DFA

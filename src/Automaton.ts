@@ -1,3 +1,4 @@
+import { groupBy, keys } from 'lodash'
 import { AutomatonDescriptor } from './types/AutomatonDescriptor'
 import { convertToRegExp } from './RegExp'
 import { AutomatonType } from './types/AutomatonType'
@@ -11,6 +12,25 @@ export class Automaton {
     automaton: AutomatonDescriptor
   ): AutomatonType {
     if (automaton.startStates.length > 1) {
+      return AutomatonType.NFA
+    }
+    let hasTwoDistinctTransitions = false
+    const groupedTransitions = groupBy(automaton.transitions, 'from')
+    const groupedKeys = keys(groupedTransitions)
+    for (const groupKey of groupedKeys) {
+      const groupedAlphabets = groupBy(groupedTransitions[groupKey], 'alphabet')
+      const alphabetKeys = keys(groupedAlphabets)
+      for (const alphabetKey of alphabetKeys) {
+        if (groupedAlphabets[alphabetKey].length > 1) {
+          hasTwoDistinctTransitions = true
+          break
+        }
+      }
+      if (hasTwoDistinctTransitions) {
+        break
+      }
+    }
+    if (hasTwoDistinctTransitions) {
       return AutomatonType.NFA
     }
     return AutomatonType.DFA
