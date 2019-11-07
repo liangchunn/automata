@@ -1,3 +1,3 @@
 describe('stub', () => {
-  expect(true).toBe(true)
+  it('stub test for tsdx', () => {})
 })

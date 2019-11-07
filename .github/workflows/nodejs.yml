@@ -20,9 +20,10 @@ jobs:
     - name: Install yarn
       run: npm i -g yarn
       shell: bash
-    - name: npm install, build, and test
+    - name: npm install, lint, build, and test
       run: |
         yarn install
+        yarn lint
         yarn build
         yarn test
       env:
