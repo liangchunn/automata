@@ -6,5 +6,5 @@ export const globalSymbolFixture: AutomatonDescriptor = {
   finalStates: [],
   startStates: [],
   symbols: [],
-  transitions: []
+  transitions: [],
 }

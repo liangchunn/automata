@@ -1,13 +1,12 @@
 import { groupBy, keys } from 'lodash'
 import { AutomatonDescriptor } from './types/AutomatonDescriptor'
-import { convertToRegExp } from './RegExp'
+import { convertToRegExp, convertToRegExpSteps } from './RegExp'
 import { AutomatonType } from './types/AutomatonType'
 import { convertToDfa } from './Converter'
 import { Word, Alphabet } from './types/Word'
 import { simulateAll, simulate } from './Simulation'
 
 export class Automaton {
-  // TODO: properly implement this
   public static getAutomatonType(
     automaton: AutomatonDescriptor
   ): AutomatonType {
@@ -47,9 +46,15 @@ export class Automaton {
   public static convertToDfa(
     automaton: AutomatonDescriptor
   ): AutomatonDescriptor {
+    if (Automaton.getAutomatonType(automaton) === AutomatonType.DFA) {
+      throw new Error('Automaton is already a DFA')
+    }
     return convertToDfa(automaton)
   }
   public static convertToRegExp(automaton: AutomatonDescriptor): string {
     return convertToRegExp(automaton)
+  }
+  public static convertToRegExpSteps(automaton: AutomatonDescriptor) {
+    return convertToRegExpSteps(automaton)
   }
 }

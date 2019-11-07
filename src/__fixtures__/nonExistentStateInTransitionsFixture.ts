@@ -9,9 +9,9 @@ export const nonExistentStateInTransitionsFixture1: AutomatonDescriptor = {
     {
       from: 's1',
       to: 's3',
-      alphabet: 'a'
-    }
-  ]
+      alphabet: 'a',
+    },
+  ],
 }
 
 export const nonExistentStateInTransitionsFixture2: AutomatonDescriptor = {
@@ -23,7 +23,7 @@ export const nonExistentStateInTransitionsFixture2: AutomatonDescriptor = {
     {
       from: 's3',
       to: 's1',
-      alphabet: 'a'
-    }
-  ]
+      alphabet: 'a',
+    },
+  ],
 }

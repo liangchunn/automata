@@ -1,32 +1,36 @@
 {
-  "name": "automata-simulation",
+  "name": "automata",
   "version": "0.1.0",
-  "main": "src/index.ts",
-  "private": true,
   "license": "CC-BY-NC-SA-4.0",
+  "author": "Liang Chun",
+  "main": "dist/index.js",
+  "module": "dist/autolib.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "typescript-node-scripts test",
-    "start": "typescript-node-scripts start",
-    "build": "typescript-node-scripts build",
-    "lint": "eslint 'src/**/*.{js,ts}'"
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
   },
   "devDependencies": {
-    "@types/jest": "^24.0.18",
-    "@types/lodash": "^4.14.138",
-    "@types/node": "^12.7.4",
-    "@typescript-eslint/eslint-plugin": "^2.1.0",
-    "@typescript-eslint/parser": "^2.1.0",
-    "babel-eslint": "^10.0.3",
-    "eslint": "^6.3.0",
-    "eslint-config-prettier": "^6.2.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-prettier": "^3.1.0",
-    "prettier": "^1.18.2",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.6.2",
-    "typescript-node-scripts": "^3.0.0"
+    "@types/jest": "^24.0.21",
+    "@types/lodash": "^4.14.144",
+    "husky": "^3.0.9",
+    "tsdx": "^0.11.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.6.4"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "lodash-es": "^4.17.15"
   }
 }

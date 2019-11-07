@@ -5,7 +5,7 @@ import { AutomatonSymbol } from './types/AutomatonSymbol'
 function validateSymbols(automaton: AutomatonDescriptor): AutomatonDescriptor {
   const illegalSymbols = [
     AutomatonSymbol.START_SYMBOL,
-    AutomatonSymbol.END_SYMBOL
+    AutomatonSymbol.END_SYMBOL,
   ]
   const foundIllegalSymbols = intersection(automaton.states, illegalSymbols)
   if (foundIllegalSymbols.length) {
@@ -19,7 +19,7 @@ function validateTransitionStates(
 ): AutomatonDescriptor {
   const transitionStates = uniq([
     ...automaton.transitions.map(transition => transition.from),
-    ...automaton.transitions.map(transition => transition.to)
+    ...automaton.transitions.map(transition => transition.to),
   ])
   const diff = difference(transitionStates, automaton.states)
   if (diff.length) {

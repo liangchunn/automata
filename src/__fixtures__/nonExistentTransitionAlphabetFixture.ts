@@ -9,7 +9,7 @@ export const nonExistentTransitionAlphabetFixture: AutomatonDescriptor = {
     {
       from: 's1',
       to: 's2',
-      alphabet: 'c'
-    }
-  ]
+      alphabet: 'c',
+    },
+  ],
 }

@@ -8,48 +8,48 @@ export const nfaFixture1: AutomatonDescriptor = {
     {
       from: '4',
       to: '3',
-      alphabet: 'a'
+      alphabet: 'a',
     },
     {
       from: '4',
       to: '3',
-      alphabet: 'b'
+      alphabet: 'b',
     },
     {
       from: '3',
       to: '3',
-      alphabet: 'b'
+      alphabet: 'b',
     },
     {
       from: '3',
       to: '4',
-      alphabet: 'a'
+      alphabet: 'a',
     },
     {
       from: '4',
       to: '2',
-      alphabet: 'b'
+      alphabet: 'b',
     },
     {
       from: '2',
       to: '2',
-      alphabet: 'a'
+      alphabet: 'a',
     },
     {
       from: '2',
       to: '1',
-      alphabet: 'b'
+      alphabet: 'b',
     },
     {
       from: '1',
       to: '1',
-      alphabet: 'a'
+      alphabet: 'a',
     },
     {
       from: '1',
       to: '1',
-      alphabet: 'b'
-    }
+      alphabet: 'b',
+    },
   ],
-  symbols: ['a', 'b']
+  symbols: ['a', 'b'],
 }

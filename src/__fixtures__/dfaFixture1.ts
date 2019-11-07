@@ -12,17 +12,17 @@ export const dfaFixture1: AutomatonDescriptor = {
     {
       from: 's1',
       to: 's2',
-      alphabet: 'a'
+      alphabet: 'a',
     },
     {
       from: 's2',
       to: 's3',
-      alphabet: 'b'
+      alphabet: 'b',
     },
     {
       from: 's3',
       to: 's4',
-      alphabet: 'a'
-    }
-  ]
+      alphabet: 'a',
+    },
+  ],
 }

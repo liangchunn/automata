@@ -87,6 +87,6 @@ export function* simulate(
   }
   yield {
     accepted: acceptedPaths.length > 0,
-    acceptedPaths
+    acceptedPaths,
   }
 }

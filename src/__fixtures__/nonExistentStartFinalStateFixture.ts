@@ -5,7 +5,7 @@ export const nonExistentStartStateFixture: AutomatonDescriptor = {
   finalStates: [],
   startStates: ['s2'],
   symbols: [],
-  transitions: []
+  transitions: [],
 }
 
 export const nonExistentFinalStateFixture: AutomatonDescriptor = {
@@ -13,5 +13,5 @@ export const nonExistentFinalStateFixture: AutomatonDescriptor = {
   finalStates: ['s2'],
   startStates: [],
   symbols: [],
-  transitions: []
+  transitions: [],
 }

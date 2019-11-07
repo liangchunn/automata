@@ -5,7 +5,7 @@ import {
   nonExistentStateInTransitionsFixture2,
   nonExistentStartStateFixture,
   nonExistentFinalStateFixture,
-  nonExistentTransitionAlphabetFixture
+  nonExistentTransitionAlphabetFixture,
 } from '../__fixtures__'
 import { Automaton } from '../Automaton'
 import { AutomatonType } from '../types/AutomatonType'

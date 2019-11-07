@@ -1,7 +1,7 @@
 import { head, flatten, uniq } from 'lodash'
 import {
   AutomatonDescriptor,
-  AutomatonTransition
+  AutomatonTransition,
 } from './types/AutomatonDescriptor'
 import { mergeSetLabels, mergedLabelContains } from './util/mergeLabels'
 import { traverse } from './Simulation'
@@ -63,7 +63,7 @@ export function convertToDfa(
           transitions.add({
             from: mergedLabel,
             to: eligibleMergedLabel,
-            alphabet: symbol
+            alphabet: symbol,
           })
         }
       }
@@ -91,6 +91,6 @@ export function convertToDfa(
       }
       return false
     }),
-    symbols: automaton.symbols
+    symbols: automaton.symbols,
   }
 }

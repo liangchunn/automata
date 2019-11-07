@@ -1,16 +1,31 @@
 {
+  "include": ["src", "types", "test"],
   "compilerOptions": {
-    "outDir": "build",
-    "module": "commonjs",
-    "target": "es6",
-    "allowJs": true,
-    "moduleResolution": "node",
-    "rootDir": "src",
+    "target": "es5",
+    "module": "esnext",
+    "lib": ["dom", "esnext"],
+    "importHelpers": true,
+    "declaration": true,
+    "sourceMap": true,
+    "rootDir": "./",
     "strict": true,
-    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
     "noUnusedLocals": true,
-    "resolveJsonModule": true,
-    "sourceMap": true
-  },
-  "exclude": ["node_modules", "build", "coverage", "dist", "setupTests.ts"]
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "*": ["src/*", "node_modules/*"]
+    },
+    "jsx": "react",
+    "esModuleInterop": true,
+    "downlevelIteration": true
+  }
 }

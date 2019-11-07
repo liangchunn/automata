@@ -13,6 +13,35 @@ export function convertToRegExp(automaton: AutomatonDescriptor): string {
   return regExp
 }
 
+export function* convertToRegExpSteps(automaton: AutomatonDescriptor) {
+  let result = initializeRegExpTransformation(automaton)
+  yield {
+    step: 'I',
+    result,
+  }
+  while (result.transitions.length > 1) {
+    result = applyERule(result)
+    yield {
+      step: 'E',
+      result,
+    }
+    result = applyVRule(result)
+    yield {
+      step: 'V',
+      result,
+    }
+    result = applySRule(result)
+    yield {
+      step: 'S',
+      result,
+    }
+  }
+  return {
+    step: 'F',
+    result,
+  }
+}
+
 export function initializeRegExpTransformation(
   automaton: AutomatonDescriptor
 ): AutomatonDescriptor {
@@ -53,7 +82,7 @@ export function initializeRegExpTransformation(
     states: [
       ...statesWithoutTraps,
       AutomatonSymbol.START_SYMBOL,
-      AutomatonSymbol.END_SYMBOL
+      AutomatonSymbol.END_SYMBOL,
     ],
     finalStates: [AutomatonSymbol.END_SYMBOL],
     startStates: [AutomatonSymbol.START_SYMBOL],
@@ -63,14 +92,14 @@ export function initializeRegExpTransformation(
       ...automaton.finalStates.map(finalState => ({
         from: finalState,
         to: AutomatonSymbol.END_SYMBOL,
-        alphabet: AutomatonSymbol.EPSILON
+        alphabet: AutomatonSymbol.EPSILON,
       })),
       ...automaton.startStates.map(startState => ({
         from: AutomatonSymbol.START_SYMBOL,
         to: startState,
-        alphabet: AutomatonSymbol.EPSILON
-      }))
-    ]
+        alphabet: AutomatonSymbol.EPSILON,
+      })),
+    ],
   }
 }
 
@@ -90,7 +119,7 @@ export function applyERule(
       in: automaton.transitions.filter(transition => transition.to === state)
         .length,
       out: automaton.transitions.filter(transision => transision.from === state)
-        .length
+        .length,
     }))
     .sort((a, b) => a.out - b.out)
 
@@ -123,7 +152,7 @@ export function applyERule(
           sink.push({
             from,
             to,
-            alphabet
+            alphabet,
           })
         }
       }
@@ -132,7 +161,7 @@ export function applyERule(
         transitions: [...automaton.transitions, ...sink].filter(
           transition => transition.from !== state && transition.to !== state
         ),
-        states: automaton.states.filter(initialState => initialState !== state)
+        states: automaton.states.filter(initialState => initialState !== state),
       }
     }
   }
@@ -177,8 +206,8 @@ export function applyVRule(
       {
         from,
         to,
-        alphabet
-      }
+        alphabet,
+      },
     ]
   }, [])
 
@@ -186,7 +215,7 @@ export function applyVRule(
 
   return {
     ...automaton,
-    transitions: newTransitions
+    transitions: newTransitions,
   }
 }
 
@@ -220,13 +249,13 @@ export function applySRule(
       sink.push({
         from: o.from,
         to: o.to,
-        alphabet: `${kleeneStarredAlphabet}${o.alphabet}`
+        alphabet: `${kleeneStarredAlphabet}${o.alphabet}`,
       })
       transitionsWithoutLoops = difference(transitionsWithoutLoops, [o])
     }
   }
   return {
     ...automaton,
-    transitions: [...transitionsWithoutLoops, ...sink]
+    transitions: [...transitionsWithoutLoops, ...sink],
   }
 }

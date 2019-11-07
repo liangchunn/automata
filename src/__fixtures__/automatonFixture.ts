@@ -26,23 +26,23 @@ export const automatonFixtures: AutomatonFixture[] = [
         {
           from: 's1',
           to: 's2',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 's2',
           to: 's3',
-          alphabet: 'b'
+          alphabet: 'b',
         },
         {
           from: 's3',
           to: 's4',
-          alphabet: 'a'
-        }
-      ]
+          alphabet: 'a',
+        },
+      ],
     },
     regExp: 'aba',
     acceptedWords: [{ word: 'aba', pathLength: 1 }],
-    rejectedWords: ['aaa', 'abb', 'baa', 'bab', 'bba', 'bbb']
+    rejectedWords: ['aaa', 'abb', 'baa', 'bab', 'bba', 'bbb'],
   },
   {
     name: 'simpleNfa',
@@ -56,37 +56,37 @@ export const automatonFixtures: AutomatonFixture[] = [
         {
           from: 's1',
           to: 's2',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 's1',
           to: 's3',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 's2',
           to: 's4',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 's3',
           to: 's4',
-          alphabet: 'b'
-        }
-      ]
+          alphabet: 'b',
+        },
+      ],
     },
-    regExp: '#(aa|ab)#',
+    regExp: 'ε(aa|ab)ε',
     acceptedWords: [
       {
         word: 'ab',
-        pathLength: 1
+        pathLength: 1,
       },
       {
         word: 'aa',
-        pathLength: 1
-      }
+        pathLength: 1,
+      },
     ],
-    rejectedWords: ['bb', 'ba']
+    rejectedWords: ['bb', 'ba'],
   },
   {
     name: 'simpleNfaTwoPaths',
@@ -100,33 +100,33 @@ export const automatonFixtures: AutomatonFixture[] = [
         {
           from: 's1',
           to: 's2',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 's1',
           to: 's3',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 's2',
           to: 's4',
-          alphabet: 'b'
+          alphabet: 'b',
         },
         {
           from: 's3',
           to: 's4',
-          alphabet: 'b'
-        }
-      ]
+          alphabet: 'b',
+        },
+      ],
     },
-    regExp: '#(ab|ab)#',
+    regExp: 'ε(ab|ab)ε',
     acceptedWords: [
       {
         word: 'ab',
-        pathLength: 2
-      }
+        pathLength: 2,
+      },
     ],
-    rejectedWords: ['aa', 'bb', 'ba']
+    rejectedWords: ['aa', 'bb', 'ba'],
   },
   {
     name: 'simpleNfaWithThreeAlphabets',
@@ -139,51 +139,51 @@ export const automatonFixtures: AutomatonFixture[] = [
         {
           from: 'q0',
           to: 'q0',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 'q0',
           to: 'q0',
-          alphabet: 'b'
+          alphabet: 'b',
         },
         {
           from: 'q0',
           to: 'q2',
-          alphabet: 'c'
+          alphabet: 'c',
         },
         {
           from: 'q0',
           to: 'q1',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 'q1',
           to: 'q2',
-          alphabet: 'b'
-        }
+          alphabet: 'b',
+        },
       ],
-      symbols: ['a', 'b', 'c']
+      symbols: ['a', 'b', 'c'],
     },
-    regExp: '#((a|b))*(c|ab)#',
+    regExp: 'ε((a|b))*(c|ab)ε',
     acceptedWords: [
       {
         word: 'aaaab',
-        pathLength: 1
+        pathLength: 1,
       },
       {
         word: 'babab',
-        pathLength: 1
+        pathLength: 1,
       },
       {
         word: 'bbbbc',
-        pathLength: 1
+        pathLength: 1,
       },
       {
         word: 'aaaac',
-        pathLength: 1
-      }
+        pathLength: 1,
+      },
     ],
-    rejectedWords: ['bbbbb', 'aaaaa', 'bbbba']
+    rejectedWords: ['bbbbb', 'aaaaa', 'bbbba'],
   },
   {
     name: 'nfaWithMultipleStartStates',
@@ -196,52 +196,52 @@ export const automatonFixtures: AutomatonFixture[] = [
         {
           from: 's1',
           to: 's2',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 's1',
           to: 's4',
-          alphabet: 'b'
+          alphabet: 'b',
         },
         {
           from: 's1',
           to: 's4',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 's2',
           to: 's3',
-          alphabet: 'b'
+          alphabet: 'b',
         },
         {
           from: 's3',
           to: 's4',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: 's4',
           to: 's4',
-          alphabet: 'b'
-        }
+          alphabet: 'b',
+        },
       ],
-      symbols: ['a', 'b']
+      symbols: ['a', 'b'],
     },
-    regExp: '(#a|#((b|a)|aba))b*#',
+    regExp: '(εa|ε((b|a)|aba))b*ε',
     acceptedWords: [
       {
         word: 'a',
-        pathLength: 2
+        pathLength: 2,
       },
       {
         word: 'bbb',
-        pathLength: 1
+        pathLength: 1,
       },
       {
         word: 'aba',
-        pathLength: 1
-      }
+        pathLength: 1,
+      },
     ],
-    rejectedWords: ['ba', 'baaaa', 'aa', 'aaa']
+    rejectedWords: ['ba', 'baaaa', 'aa', 'aaa'],
   },
   {
     name: 'complexNfaWithTrapState',
@@ -254,74 +254,74 @@ export const automatonFixtures: AutomatonFixture[] = [
         {
           from: '4',
           to: '3',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: '4',
           to: '3',
-          alphabet: 'b'
+          alphabet: 'b',
         },
         {
           from: '3',
           to: '3',
-          alphabet: 'b'
+          alphabet: 'b',
         },
         {
           from: '3',
           to: '4',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: '4',
           to: '2',
-          alphabet: 'b'
+          alphabet: 'b',
         },
         {
           from: '2',
           to: '2',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: '2',
           to: '1',
-          alphabet: 'b'
+          alphabet: 'b',
         },
         {
           from: '1',
           to: '1',
-          alphabet: 'a'
+          alphabet: 'a',
         },
         {
           from: '1',
           to: '1',
-          alphabet: 'b'
-        }
+          alphabet: 'b',
+        },
       ],
-      symbols: ['a', 'b']
+      symbols: ['a', 'b'],
     },
-    regExp: '#((a|b)b*a)*((#|ba*#)|(a|b)b*#)',
+    regExp: 'ε((a|b)b*a)*((ε|ba*ε)|(a|b)b*ε)',
     acceptedWords: [
       {
         word: '',
-        pathLength: 1
+        pathLength: 1,
       },
       {
         word: 'a',
-        pathLength: 1
+        pathLength: 1,
       },
       {
         word: 'b',
-        pathLength: 2
+        pathLength: 2,
       },
       {
         word: 'bbb',
-        pathLength: 1
+        pathLength: 1,
       },
       {
         word: 'baaaaaaa',
-        pathLength: 2
-      }
+        pathLength: 2,
+      },
     ],
-    rejectedWords: []
-  }
+    rejectedWords: [],
+  },
 ]
