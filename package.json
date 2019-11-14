@@ -4,7 +4,7 @@
   "license": "CC-BY-NC-SA-4.0",
   "author": "Liang Chun",
   "main": "dist/index.js",
-  "module": "dist/autolib.esm.js",
+  "module": "dist/automata.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
@@ -32,8 +32,5 @@
   "dependencies": {
     "lodash": "^4.17.15",
     "lodash-es": "^4.17.15"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   }
 }

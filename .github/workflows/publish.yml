@@ -32,7 +32,7 @@ jobs:
           CI: true
       - name: npm publish
         run: |
-          npm config set //npm.pkg.github.com/:_authToken=$NPM_TOKEN
+          npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
           npm publish --access public
         env:
           CI: true
