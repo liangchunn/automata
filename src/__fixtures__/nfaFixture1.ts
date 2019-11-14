@@ -1,4 +1,4 @@
-import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
+import { AutomatonDescriptor } from '../types'
 
 export const nfaFixture1: AutomatonDescriptor = {
   states: ['1', '2', '3', '4'],

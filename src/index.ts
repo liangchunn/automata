@@ -1,2 +1,2 @@
 export * from './Automaton'
-export * from './types/AutomatonDescriptor'
+export * from './types'

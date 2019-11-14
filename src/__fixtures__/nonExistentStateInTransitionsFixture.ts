@@ -1,4 +1,4 @@
-import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
+import { AutomatonDescriptor } from '../types'
 
 export const nonExistentStateInTransitionsFixture1: AutomatonDescriptor = {
   states: ['s1', 's2'],

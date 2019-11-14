@@ -1,4 +1,4 @@
-import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
+import { AutomatonDescriptor } from '../types'
 
 /**
  * Language RegExp: aba

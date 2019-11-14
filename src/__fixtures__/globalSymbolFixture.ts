@@ -1,5 +1,4 @@
-import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
-import { AutomatonSymbol } from '../types/AutomatonSymbol'
+import { AutomatonDescriptor, AutomatonSymbol } from '../types'
 
 export const globalSymbolFixture: AutomatonDescriptor = {
   states: [AutomatonSymbol.START_SYMBOL],

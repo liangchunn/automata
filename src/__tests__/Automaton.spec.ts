@@ -8,7 +8,7 @@ import {
   nonExistentTransitionAlphabetFixture,
 } from '../__fixtures__'
 import { Automaton } from '../Automaton'
-import { AutomatonType } from '../types/AutomatonType'
+import { AutomatonType } from '../types'
 import { validateAutomaton } from '../Validation'
 
 describe('validation', () => {

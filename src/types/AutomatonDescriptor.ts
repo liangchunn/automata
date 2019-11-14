@@ -1,4 +1,4 @@
-import { Alphabet } from './Word'
+import { Alphabet } from './'
 
 export type State = string
 

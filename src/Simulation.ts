@@ -1,6 +1,5 @@
 import { flatten } from 'lodash'
-import { AutomatonDescriptor } from './types/AutomatonDescriptor'
-import { AutomatonSymbol } from './types/AutomatonSymbol'
+import { AutomatonDescriptor, AutomatonSymbol } from './types'
 import { Node } from './Node'
 
 export function traverse(

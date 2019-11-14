@@ -1,36 +1,75 @@
 import { flatten, difference, head } from 'lodash'
-import { AutomatonSymbol } from './types/AutomatonSymbol'
-import { AutomatonDescriptor } from './types/AutomatonDescriptor'
+import {
+  AutomatonSymbol,
+  AutomatonDescriptor,
+  ApplyType,
+  ApplyInitType,
+  ApplyEType,
+  ApplyVType,
+  ApplySType,
+  RegExpStep,
+} from './types'
+import { MAXIMUM_TRAVERSE_DEPTH } from './util'
 
 export function convertToRegExp(automaton: AutomatonDescriptor): string {
-  let result = initializeRegExpTransformation(automaton)
+  let result = initializeRegExpTransformation(automaton).automaton
   while (result.transitions.length > 1) {
-    result = applyERule(result)
-    result = applyVRule(result)
-    result = applySRule(result)
+    result = applyERule(result).automaton
+    result = applyVRule(result).automaton
+    result = applySRule(result).automaton
   }
   const regExp = result.transitions[0].alphabet
   return regExp
 }
 
+/**
+ * Converts an automaton into a RegExp automaton with the transformation history
+ * @param automaton
+ */
+export function convertToRegExpWithHistory(automaton: AutomatonDescriptor) {
+  let depth = 0
+  const sink: ApplyType[] = []
+  sink.push({
+    kind: RegExpStep.DEFAULT,
+    automaton,
+  })
+  let result: ApplyType = initializeRegExpTransformation(automaton)
+  sink.push(result)
+  while (result.automaton.transitions.length > 1) {
+    depth++
+    if (depth > MAXIMUM_TRAVERSE_DEPTH) {
+      throw new Error()
+    }
+    const fns = [applyERule, applyVRule, applySRule]
+    fns.forEach(fn => {
+      const nextResult = fn(result.automaton)
+      if (nextResult.kind !== RegExpStep.NO_OP) {
+        sink.push(nextResult)
+        result = nextResult
+      }
+    })
+  }
+  return sink
+}
+
 export function* convertToRegExpSteps(automaton: AutomatonDescriptor) {
-  let result = initializeRegExpTransformation(automaton)
+  let result = initializeRegExpTransformation(automaton).automaton
   yield {
     step: 'I',
     result,
   }
   while (result.transitions.length > 1) {
-    result = applyERule(result)
+    result = applyERule(result).automaton
     yield {
       step: 'E',
       result,
     }
-    result = applyVRule(result)
+    result = applyVRule(result).automaton
     yield {
       step: 'V',
       result,
     }
-    result = applySRule(result)
+    result = applySRule(result).automaton
     yield {
       step: 'S',
       result,
@@ -44,7 +83,7 @@ export function* convertToRegExpSteps(automaton: AutomatonDescriptor) {
 
 export function initializeRegExpTransformation(
   automaton: AutomatonDescriptor
-): AutomatonDescriptor {
+): ApplyInitType {
   // we want to remove trap states because they can cause trouble when trying to
   // convert them into regular expressions
 
@@ -79,33 +118,36 @@ export function initializeRegExpTransformation(
   )
 
   return {
-    states: [
-      ...statesWithoutTraps,
-      AutomatonSymbol.START_SYMBOL,
-      AutomatonSymbol.END_SYMBOL,
-    ],
-    finalStates: [AutomatonSymbol.END_SYMBOL],
-    startStates: [AutomatonSymbol.START_SYMBOL],
-    symbols: [...automaton.symbols, AutomatonSymbol.EPSILON],
-    transitions: [
-      ...transitionsWithoutTraps,
-      ...automaton.finalStates.map(finalState => ({
-        from: finalState,
-        to: AutomatonSymbol.END_SYMBOL,
-        alphabet: AutomatonSymbol.EPSILON,
-      })),
-      ...automaton.startStates.map(startState => ({
-        from: AutomatonSymbol.START_SYMBOL,
-        to: startState,
-        alphabet: AutomatonSymbol.EPSILON,
-      })),
-    ],
+    automaton: {
+      states: [
+        ...statesWithoutTraps,
+        AutomatonSymbol.START_SYMBOL,
+        AutomatonSymbol.END_SYMBOL,
+      ],
+      finalStates: [AutomatonSymbol.END_SYMBOL],
+      startStates: [AutomatonSymbol.START_SYMBOL],
+      symbols: [...automaton.symbols, AutomatonSymbol.EPSILON],
+      transitions: [
+        ...transitionsWithoutTraps,
+        ...automaton.finalStates.map(finalState => ({
+          from: finalState,
+          to: AutomatonSymbol.END_SYMBOL,
+          alphabet: AutomatonSymbol.EPSILON,
+        })),
+        ...automaton.startStates.map(startState => ({
+          from: AutomatonSymbol.START_SYMBOL,
+          to: startState,
+          alphabet: AutomatonSymbol.EPSILON,
+        })),
+      ],
+    },
+    kind: RegExpStep.INIT,
   }
 }
 
 export function applyERule(
   automaton: Readonly<AutomatonDescriptor>
-): AutomatonDescriptor {
+): ApplyEType {
   // find the lowest number of output edges excluding the start and the end state
   const statesWithoutAugmentation = automaton.states.filter(
     state =>
@@ -157,20 +199,29 @@ export function applyERule(
         }
       }
       return {
-        ...automaton,
-        transitions: [...automaton.transitions, ...sink].filter(
-          transition => transition.from !== state && transition.to !== state
-        ),
-        states: automaton.states.filter(initialState => initialState !== state),
+        automaton: {
+          ...automaton,
+          transitions: [...automaton.transitions, ...sink].filter(
+            transition => transition.from !== state && transition.to !== state
+          ),
+          states: automaton.states.filter(
+            initialState => initialState !== state
+          ),
+        },
+        kind: RegExpStep.E,
+        state: first.state,
       }
     }
   }
-  return automaton
+  return {
+    automaton,
+    kind: RegExpStep.NO_OP,
+  }
 }
 
 export function applyVRule(
   automaton: Readonly<AutomatonDescriptor>
-): AutomatonDescriptor {
+): ApplyVType {
   const sink: Record<
     string,
     {
@@ -189,6 +240,13 @@ export function applyVRule(
   const eligibleTransitions = Object.values(sink).filter(
     grouped => grouped.length > 1
   )
+
+  if (!eligibleTransitions.length) {
+    return {
+      automaton,
+      kind: RegExpStep.NO_OP,
+    }
+  }
 
   const negatedTransitions = difference(
     automaton.transitions,
@@ -214,17 +272,29 @@ export function applyVRule(
   const newTransitions = [...negatedTransitions, ...reducedEligibleTransitions]
 
   return {
-    ...automaton,
-    transitions: newTransitions,
+    automaton: {
+      ...automaton,
+      transitions: newTransitions,
+    },
+    kind: RegExpStep.V,
+    transitions: eligibleTransitions,
   }
 }
 
 export function applySRule(
   automaton: Readonly<AutomatonDescriptor>
-): AutomatonDescriptor {
+): ApplySType {
   const transitionsWithLoops = automaton.transitions.filter(
     transition => transition.from === transition.to
   )
+
+  if (!transitionsWithLoops.length) {
+    return {
+      automaton,
+      kind: RegExpStep.NO_OP,
+    }
+  }
+
   let transitionsWithoutLoops = difference(
     automaton.transitions,
     transitionsWithLoops
@@ -255,7 +325,11 @@ export function applySRule(
     }
   }
   return {
-    ...automaton,
-    transitions: [...transitionsWithoutLoops, ...sink],
+    automaton: {
+      ...automaton,
+      transitions: [...transitionsWithoutLoops, ...sink],
+    },
+    kind: RegExpStep.S,
+    transitions: transitionsWithLoops,
   }
 }

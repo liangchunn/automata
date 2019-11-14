@@ -1,5 +1,5 @@
 import { automatonFixtures } from '../__fixtures__'
-import { AutomatonType } from '../types/AutomatonType'
+import { AutomatonType } from '../types'
 import { Automaton } from '../Automaton'
 
 describe('convert to regexp', () => {

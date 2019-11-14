@@ -1,6 +1,9 @@
 name: Node CI
 
-on: [push]
+on:
+  push:
+    tags:
+      - v0.*
 
 jobs:
   build:
@@ -8,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [12.x]
 
     steps:
       - uses: actions/checkout@v1
@@ -27,3 +30,10 @@ jobs:
           yarn test
         env:
           CI: true
+      - name: npm publish
+        run: |
+          npm config set //npm.pkg.github.com/:_authToken=$NPM_TOKEN
+          npm publish
+        env:
+          CI: true
+          NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

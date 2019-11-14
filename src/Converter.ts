@@ -2,10 +2,14 @@ import { head, flatten, uniq } from 'lodash'
 import {
   AutomatonDescriptor,
   AutomatonTransition,
-} from './types/AutomatonDescriptor'
-import { mergeSetLabels, mergedLabelContains } from './util/mergeLabels'
+  AutomatonSymbol,
+} from './types'
+import {
+  mergeSetLabels,
+  mergedLabelContains,
+  MAXIMUM_TRAVERSE_DEPTH,
+} from './util'
 import { traverse } from './Simulation'
-import { AutomatonSymbol } from './types/AutomatonSymbol'
 
 export function convertToDfa(
   automaton: AutomatonDescriptor
@@ -23,7 +27,7 @@ export function convertToDfa(
     const current = head(queue)!
 
     depth++
-    if (depth > 10000) {
+    if (depth > MAXIMUM_TRAVERSE_DEPTH) {
       throw new Error('Maximum depth exceeded')
     }
 

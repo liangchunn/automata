@@ -1,4 +1,4 @@
-import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
+import { AutomatonDescriptor } from '../types'
 
 const nfa7: AutomatonDescriptor = {
   states: ['s0', 's1'],

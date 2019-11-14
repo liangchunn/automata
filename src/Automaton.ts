@@ -1,9 +1,17 @@
 import { groupBy, keys } from 'lodash'
-import { AutomatonDescriptor } from './types/AutomatonDescriptor'
-import { convertToRegExp, convertToRegExpSteps } from './RegExp'
-import { AutomatonType } from './types/AutomatonType'
+import {
+  AutomatonType,
+  AutomatonDescriptor,
+  Word,
+  Alphabet,
+  ApplyType,
+} from './types'
+import {
+  convertToRegExp,
+  convertToRegExpSteps,
+  convertToRegExpWithHistory,
+} from './RegExp'
 import { convertToDfa } from './Converter'
-import { Word, Alphabet } from './types/Word'
 import { simulateAll, simulate } from './Simulation'
 
 export class Automaton {
@@ -56,5 +64,10 @@ export class Automaton {
   }
   public static convertToRegExpSteps(automaton: AutomatonDescriptor) {
     return convertToRegExpSteps(automaton)
+  }
+  public static convertToRegExpWithHistory(
+    automaton: AutomatonDescriptor
+  ): ApplyType[] {
+    return convertToRegExpWithHistory(automaton)
   }
 }

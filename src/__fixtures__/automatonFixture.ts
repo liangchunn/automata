@@ -1,5 +1,4 @@
-import { AutomatonType } from '../types/AutomatonType'
-import { AutomatonDescriptor } from '../types/AutomatonDescriptor'
+import { AutomatonType, AutomatonDescriptor } from '../types'
 
 type AutomatonFixture = {
   name: string
