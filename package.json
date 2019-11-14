@@ -3,6 +3,10 @@
   "version": "0.1.3",
   "license": "CC-BY-NC-SA-4.0",
   "author": "Liang Chun",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liangchunn/automata.git"
+  },
   "main": "dist/index.js",
   "module": "dist/automata.esm.js",
   "typings": "dist/index.d.ts",
