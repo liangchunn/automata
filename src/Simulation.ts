@@ -1,5 +1,5 @@
 import { flatten } from 'lodash'
-import { AutomatonDescriptor, AutomatonSymbol } from './types'
+import { AutomatonDescriptor, AutomatonSymbol, SimulationType } from './types'
 import { Node } from './Node'
 
 export function traverse(
@@ -26,22 +26,19 @@ export function traverse(
 export function simulateAll(
   automaton: AutomatonDescriptor,
   word: string[] | string
-) {
+): SimulationType {
   const generator = simulate(automaton, word)
   let result
   for (const value of generator) {
     result = value
   }
-  return result as {
-    accepted: boolean
-    acceptedPaths: string[][]
-  }
+  return result as SimulationType
 }
 
 export function* simulate(
   automaton: AutomatonDescriptor,
   word: string[] | string
-) {
+): Generator<Node | SimulationType, void, unknown> {
   let states = automaton.startStates
 
   const rootNode = new Node(AutomatonSymbol.START_SYMBOL, null, [])

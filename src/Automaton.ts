@@ -1,5 +1,11 @@
 import { groupBy, keys } from 'lodash'
-import { AutomatonType, AutomatonDescriptor, Word, ApplyType } from './types'
+import {
+  AutomatonType,
+  AutomatonDescriptor,
+  Word,
+  ApplyType,
+  SimulationType,
+} from './types'
 import {
   getRegExp,
   convertToRegExpSteps,
@@ -55,7 +61,10 @@ export class Automaton {
    * @param automaton
    * @param word
    */
-  public static simulateAll(automaton: AutomatonDescriptor, word: Word) {
+  public static simulateAll(
+    automaton: AutomatonDescriptor,
+    word: Word
+  ): SimulationType {
     return simulateAll(automaton, word)
   }
 
