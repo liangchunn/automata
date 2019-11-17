@@ -1,13 +1,7 @@
 import { groupBy, keys } from 'lodash'
+import { AutomatonType, AutomatonDescriptor, Word, ApplyType } from './types'
 import {
-  AutomatonType,
-  AutomatonDescriptor,
-  Word,
-  Alphabet,
-  ApplyType,
-} from './types'
-import {
-  convertToRegExp,
+  getRegExp,
   convertToRegExpSteps,
   convertToRegExpWithHistory,
 } from './RegExp'
@@ -15,6 +9,10 @@ import { convertToDfa } from './Converter'
 import { simulateAll, simulate } from './Simulation'
 
 export class Automaton {
+  /**
+   * Determine if a given automaton is a DFA or an NFA
+   * @param automaton
+   */
   public static getAutomatonType(
     automaton: AutomatonDescriptor
   ): AutomatonType {
@@ -43,14 +41,28 @@ export class Automaton {
     return AutomatonType.DFA
   }
 
-  public static simulate(automaton: AutomatonDescriptor, alphabet: Alphabet) {
-    return simulate(automaton, alphabet)
+  /**
+   * Creates a generator that simulates a word on a given automaton
+   * @param automaton
+   * @param alphabet
+   */
+  public static simulate(automaton: AutomatonDescriptor, word: Word) {
+    return simulate(automaton, word)
   }
 
+  /**
+   * Simulates a word on a given automaton
+   * @param automaton
+   * @param word
+   */
   public static simulateAll(automaton: AutomatonDescriptor, word: Word) {
     return simulateAll(automaton, word)
   }
 
+  /**
+   * Converts an NFA to a DFA
+   * @param automaton
+   */
   public static convertToDfa(
     automaton: AutomatonDescriptor
   ): AutomatonDescriptor {
@@ -59,12 +71,27 @@ export class Automaton {
     }
     return convertToDfa(automaton)
   }
-  public static convertToRegExp(automaton: AutomatonDescriptor): string {
-    return convertToRegExp(automaton)
+
+  /**
+   * Gets the regular experssion string of a given automaton
+   * @param automaton
+   */
+  public static getRegExp(automaton: AutomatonDescriptor): string {
+    return getRegExp(automaton)
   }
+
+  /**
+   * Creates a generator that converts a given automaton into a regular expression automaton
+   * @param automaton
+   */
   public static convertToRegExpSteps(automaton: AutomatonDescriptor) {
     return convertToRegExpSteps(automaton)
   }
+
+  /**
+   * Converts an automaton into a RegExp automaton with the transformation history
+   * @param automaton
+   */
   public static convertToRegExpWithHistory(
     automaton: AutomatonDescriptor
   ): ApplyType[] {

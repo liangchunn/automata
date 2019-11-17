@@ -11,6 +11,11 @@ import {
 } from './util'
 import { traverse } from './Simulation'
 
+/**
+ * Converts an NFA to a DFA
+ * Required pre-condition: the given automata must be a NFA
+ * @param automaton
+ */
 export function convertToDfa(
   automaton: AutomatonDescriptor
 ): AutomatonDescriptor {

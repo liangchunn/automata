@@ -11,8 +11,12 @@ import {
 } from './types'
 import { MAXIMUM_TRAVERSE_DEPTH } from './util'
 
-export function convertToRegExp(automaton: AutomatonDescriptor): string {
-  let result = initializeRegExpTransformation(automaton).automaton
+/**
+ * Gets the regular experssion string of a given automaton
+ * @param automaton
+ */
+export function getRegExp(automaton: AutomatonDescriptor): string {
+  let result = prepareRegExpTransformation(automaton).automaton
   while (result.transitions.length > 1) {
     result = applyERule(result).automaton
     result = applyVRule(result).automaton
@@ -33,7 +37,7 @@ export function convertToRegExpWithHistory(automaton: AutomatonDescriptor) {
     kind: RegExpStep.DEFAULT,
     automaton,
   })
-  let result: ApplyType = initializeRegExpTransformation(automaton)
+  let result: ApplyType = prepareRegExpTransformation(automaton)
   sink.push(result)
   while (result.automaton.transitions.length > 1) {
     depth++
@@ -52,8 +56,12 @@ export function convertToRegExpWithHistory(automaton: AutomatonDescriptor) {
   return sink
 }
 
+/**
+ * Creates a generator that converts a given automaton into a regular expression automaton
+ * @param automaton
+ */
 export function* convertToRegExpSteps(automaton: AutomatonDescriptor) {
-  let result = initializeRegExpTransformation(automaton).automaton
+  let result = prepareRegExpTransformation(automaton).automaton
   yield {
     step: 'I',
     result,
@@ -81,7 +89,11 @@ export function* convertToRegExpSteps(automaton: AutomatonDescriptor) {
   }
 }
 
-export function initializeRegExpTransformation(
+/**
+ * Prepares an automaton to be converted into a RegExp automaton
+ * @param automaton
+ */
+export function prepareRegExpTransformation(
   automaton: AutomatonDescriptor
 ): ApplyInitType {
   // we want to remove trap states because they can cause trouble when trying to
@@ -145,6 +157,10 @@ export function initializeRegExpTransformation(
   }
 }
 
+/**
+ * Applies the E rule by removing transitive transitions (a->b->c into a->c)
+ * @param automaton
+ */
 export function applyERule(
   automaton: Readonly<AutomatonDescriptor>
 ): ApplyEType {
@@ -219,9 +235,14 @@ export function applyERule(
   }
 }
 
+/**
+ * Applies the V rule by merging all parallel transitions (a-(x)->b, a->(y)->b to a->(x|y)->b)
+ * @param automaton
+ */
 export function applyVRule(
   automaton: Readonly<AutomatonDescriptor>
 ): ApplyVType {
+  // keeps track of transitions by keying them with the `from` label and `to` label
   const sink: Record<
     string,
     {
@@ -230,6 +251,7 @@ export function applyVRule(
       alphabet: string
     }[]
   > = {}
+
   for (const transition of automaton.transitions) {
     const label = `${transition.from}${transition.to}`
     if (sink[label] === undefined) {
@@ -237,6 +259,8 @@ export function applyVRule(
     }
     sink[label].push(transition)
   }
+
+  // finds all the transitions (values of the sink) which has more than 1 transition
   const eligibleTransitions = Object.values(sink).filter(
     grouped => grouped.length > 1
   )
@@ -248,11 +272,14 @@ export function applyVRule(
     }
   }
 
+  // gets the negated set of transitions of the automta with the eligible transitions
   const negatedTransitions = difference(
     automaton.transitions,
     flatten(eligibleTransitions)
   )
 
+  // for each grouped transitions, we want to merge the transition symbol into one transition by
+  // appending them with the union symbol
   const reducedEligibleTransitions = eligibleTransitions.reduce((acc, curr) => {
     const alphabet = `(${curr
       .map(transition => transition.alphabet)
@@ -269,6 +296,8 @@ export function applyVRule(
     ]
   }, [])
 
+  // construct the new transitions of the automaton by merging the negated transitions
+  // with the newly constructed merged transitions
   const newTransitions = [...negatedTransitions, ...reducedEligibleTransitions]
 
   return {
@@ -281,9 +310,14 @@ export function applyVRule(
   }
 }
 
+/**
+ * Applies the S rule by removing loop states and merging them to the outgoing transitions of a particular state
+ * @param automaton
+ */
 export function applySRule(
   automaton: Readonly<AutomatonDescriptor>
 ): ApplySType {
+  // gets all transitions with loops
   const transitionsWithLoops = automaton.transitions.filter(
     transition => transition.from === transition.to
   )
@@ -295,12 +329,13 @@ export function applySRule(
     }
   }
 
+  // gets the negated set of the automaton's transitions with the transitions with loops
   let transitionsWithoutLoops = difference(
     automaton.transitions,
     transitionsWithLoops
   )
 
-  const sink: {
+  const mergedTransitions: {
     from: string
     to: string
     alphabet: string
@@ -312,11 +347,13 @@ export function applySRule(
       transition.alphabet.length > 1
         ? `(${transition.alphabet})${AutomatonSymbol.KLEENE_STAR}`
         : `${transition.alphabet}${AutomatonSymbol.KLEENE_STAR}`
+    // get all the outgoing transitions of a state
     const outgoingTransitions = transitionsWithoutLoops.filter(
       transition => transition.from === state
     )
+    // merge the loop transition with the outgoing transitions of the given state
     for (const o of outgoingTransitions) {
-      sink.push({
+      mergedTransitions.push({
         from: o.from,
         to: o.to,
         alphabet: `${kleeneStarredAlphabet}${o.alphabet}`,
@@ -327,7 +364,7 @@ export function applySRule(
   return {
     automaton: {
       ...automaton,
-      transitions: [...transitionsWithoutLoops, ...sink],
+      transitions: [...transitionsWithoutLoops, ...mergedTransitions],
     },
     kind: RegExpStep.S,
     transitions: transitionsWithLoops,

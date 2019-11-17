@@ -9,7 +9,7 @@ describe('convert to regexp', () => {
   for (const fixture of nfaFixtures) {
     it(`can convert ${fixture.name} into a regular expression`, () => {
       const { config, regExp } = fixture
-      expect(Automaton.convertToRegExp(config)).toEqual(regExp)
+      expect(Automaton.getRegExp(config)).toEqual(regExp)
     })
   }
 })
