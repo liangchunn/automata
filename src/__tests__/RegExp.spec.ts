@@ -1,6 +1,7 @@
 import { automatonFixtures } from '../__fixtures__'
 import { AutomatonType } from '../types'
 import { Automaton } from '../Automaton'
+import { toRegExp } from '../operators'
 
 describe('convert to regexp', () => {
   const nfaFixtures = automatonFixtures.filter(
@@ -9,7 +10,8 @@ describe('convert to regexp', () => {
   for (const fixture of nfaFixtures) {
     it(`can convert ${fixture.name} into a regular expression`, () => {
       const { config, regExp } = fixture
-      expect(Automaton.getRegExp(config)).toEqual(regExp)
+      const automaton = new Automaton(config)
+      expect(automaton.pipe(toRegExp)).toEqual(regExp)
     })
   }
 })

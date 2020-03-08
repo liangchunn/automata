@@ -1,25 +1,21 @@
 import { head, flatten, uniq } from 'lodash'
-import {
-  AutomatonDescriptor,
-  AutomatonTransition,
-  AutomatonSymbol,
-} from './types'
+import { AutomatonTransition, AutomatonSymbol } from '../types'
 import {
   mergeSetLabels,
   mergedLabelContains,
   MAXIMUM_TRAVERSE_DEPTH,
-} from './util'
-import { traverse } from './Simulation'
+} from '../util'
+import { traverse } from '../internal/simulation/traverse'
+import { Automaton } from '../Automaton'
 
 /**
  * Converts an NFA to a DFA
  * Required pre-condition: the given automata must be a NFA
- * @param automaton
+ * @param config
  */
-export function convertToDfa(
-  automaton: AutomatonDescriptor
-): AutomatonDescriptor {
-  const queue = [automaton.startStates]
+export function toDfa(automaton: Automaton): Automaton {
+  const descriptor = automaton.descriptor
+  const queue = [descriptor.startStates]
 
   const startStates: Set<string> = new Set()
   const states: Set<string> = new Set()
@@ -44,12 +40,12 @@ export function convertToDfa(
     }
 
     const tempTransitions = flatten(
-      current.map(state => automaton.transitions.filter(t => t.from === state))
+      current.map(state => descriptor.transitions.filter(t => t.from === state))
     )
 
     const nextStates: string[][] = []
 
-    for (const symbol of automaton.symbols) {
+    for (const symbol of descriptor.symbols) {
       const eligibleStates = traverse(tempTransitions, symbol)
       let eligibleNextStates = uniq(eligibleStates).filter(
         state => state !== AutomatonSymbol.NULL_STATE_SYMBOL
@@ -88,18 +84,18 @@ export function convertToDfa(
     queue.shift()
   }
 
-  return {
+  return new Automaton({
     states: Array.from(states),
     transitions: Array.from(transitions),
     startStates: Array.from(startStates),
     finalStates: Array.from(states).filter(s => {
-      for (const finalStateLabel of automaton.finalStates) {
+      for (const finalStateLabel of descriptor.finalStates) {
         if (s.indexOf(finalStateLabel) !== -1) {
           return true
         }
       }
       return false
     }),
-    symbols: automaton.symbols,
-  }
+    symbols: descriptor.symbols,
+  })
 }

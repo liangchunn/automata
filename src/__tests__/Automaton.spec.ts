@@ -10,6 +10,8 @@ import {
 import { Automaton } from '../Automaton'
 import { AutomatonType } from '../types'
 import { validateAutomaton } from '../Validation'
+import { simulateAll } from '../operators/simulate'
+import { toDfa } from '../operators'
 
 describe('validation', () => {
   it('throws when the global start symbol is used', () => {
@@ -48,13 +50,13 @@ describe('automaton type', () => {
   for (const fixture of dfaFixtures) {
     it(`verifies that ${fixture.name} is a DFA`, () => {
       const { config } = fixture
-      expect(Automaton.getAutomatonType(config)).toBe(AutomatonType.DFA)
+      expect(new Automaton(config).getAutomatonType()).toBe(AutomatonType.DFA)
     })
   }
   for (const fixture of nfaFixtures) {
     it(`verifies that ${fixture.name} is a NFA`, () => {
       const { config } = fixture
-      expect(Automaton.getAutomatonType(config)).toBe(AutomatonType.NFA)
+      expect(new Automaton(config).getAutomatonType()).toBe(AutomatonType.NFA)
     })
   }
 })
@@ -69,13 +71,14 @@ describe('automaton simulation', () => {
   for (const fixture of dfaFixtures) {
     it(`can simulate words in the DFA ${fixture.name}`, () => {
       const { config, acceptedWords, rejectedWords } = fixture
+      const automaton = new Automaton(config)
       for (const word of acceptedWords) {
-        const simulation = Automaton.simulateAll(config, word.word)
+        const simulation = automaton.pipe(simulateAll(word.word))
         expect(simulation.accepted).toBe(true)
         expect(simulation.acceptedPaths).toHaveLength(word.pathLength)
       }
       for (const word of rejectedWords) {
-        const simulation = Automaton.simulateAll(config, word)
+        const simulation = automaton.pipe(simulateAll(word))
         expect(simulation.accepted).toBe(false)
         expect(simulation.acceptedPaths).toHaveLength(0)
       }
@@ -85,13 +88,14 @@ describe('automaton simulation', () => {
   for (const fixture of nfaFixtures) {
     it(`can simulate words in the NFA ${fixture.name}`, () => {
       const { config, acceptedWords, rejectedWords } = fixture
+      const automaton = new Automaton(config)
       for (const word of acceptedWords) {
-        const simulation = Automaton.simulateAll(config, word.word)
+        const simulation = automaton.pipe(simulateAll(word.word))
         expect(simulation.accepted).toBe(true)
         expect(simulation.acceptedPaths).toHaveLength(word.pathLength)
       }
       for (const word of rejectedWords) {
-        const simulation = Automaton.simulateAll(config, word)
+        const simulation = automaton.pipe(simulateAll(word))
         expect(simulation.accepted).toBe(false)
         expect(simulation.acceptedPaths).toHaveLength(0)
       }
@@ -105,15 +109,15 @@ describe('NFA to DFA conversion', () => {
   )
   for (const fixture of nfaFixtures) {
     it(`accepts thee same word as the converted DFA of the original NFA ${fixture.name}`, () => {
-      const dfaConfig = Automaton.convertToDfa(fixture.config)
+      const dfa = new Automaton(fixture.config).pipe(toDfa)
       for (const word of fixture.acceptedWords) {
-        expect(
-          Automaton.simulateAll(fixture.config, word.word).accepted
-        ).toEqual(Automaton.simulateAll(dfaConfig, word.word).accepted)
+        expect(dfa.pipe(simulateAll(word.word)).accepted).toEqual(
+          dfa.pipe(simulateAll(word.word)).accepted
+        )
       }
       for (const word of fixture.rejectedWords) {
-        expect(Automaton.simulateAll(fixture.config, word).accepted).toEqual(
-          Automaton.simulateAll(dfaConfig, word).accepted
+        expect(dfa.pipe(simulateAll(word)).accepted).toEqual(
+          dfa.pipe(simulateAll(word)).accepted
         )
       }
     })
