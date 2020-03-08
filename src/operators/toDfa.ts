@@ -1,10 +1,6 @@
 import { head, flatten, uniq } from 'lodash'
 import { AutomatonTransition, AutomatonSymbol } from '../types'
-import {
-  mergeSetLabels,
-  mergedLabelContains,
-  MAXIMUM_TRAVERSE_DEPTH,
-} from '../util'
+import { mergeSetLabels, mergedLabelContains, createDepthGuard } from '../util'
 import { traverse } from '../internal/simulation/traverse'
 import { Automaton } from '../Automaton'
 
@@ -14,6 +10,8 @@ import { Automaton } from '../Automaton'
  * @param config
  */
 export function toDfa(automaton: Automaton): Automaton {
+  const tick = createDepthGuard()
+
   const descriptor = automaton.descriptor
   const queue = [descriptor.startStates]
 
@@ -22,15 +20,9 @@ export function toDfa(automaton: Automaton): Automaton {
   const transitions: Set<AutomatonTransition> = new Set()
 
   let isFirstIteration = true
-  let depth = 0
 
   while (queue.length) {
     const current = head(queue)!
-
-    depth++
-    if (depth > MAXIMUM_TRAVERSE_DEPTH) {
-      throw new Error('Maximum depth exceeded')
-    }
 
     const mergedLabel = mergeSetLabels(current)
 
@@ -82,6 +74,7 @@ export function toDfa(automaton: Automaton): Automaton {
     }
 
     queue.shift()
+    tick()
   }
 
   return new Automaton({

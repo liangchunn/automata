@@ -3,6 +3,7 @@ import { traverse } from '../internal/simulation/traverse'
 import { SimulationType, AutomatonSymbol } from '../types'
 import { Node } from '../util/Node'
 import { Automaton } from '../Automaton'
+import { invariant } from '../util/invariant'
 
 export function simulateAll(word: string[] | string) {
   return (automaton: Automaton) => {
@@ -33,13 +34,11 @@ export function simulate(word: string[] | string) {
       const nextStates = states.map(state =>
         traverse(transitions, alphabet, state)
       )
-      if (nextStates.length !== ptrs.length) {
-        const error = new Error(
-          'Invariant violation: next states and execution pointer must have the same length'
-        )
-        error.name = 'InvariantError'
-        throw error
-      }
+
+      invariant(
+        nextStates.length === ptrs.length,
+        'Next states and execution pointer must have the same length'
+      )
 
       for (let i = 0; i < ptrs.length; i++) {
         const ptr = ptrs[i]
